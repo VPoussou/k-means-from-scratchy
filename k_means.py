@@ -9,6 +9,9 @@ class K_means:
     def __init__(self, k:int, data: numpy.ndarray):
         self.k = k
         self.data = data
+        self.data[0][len(self.data[0])] = 'clusters'
+        for index, line in enumerate(range(1, len(self.data))):          
+            line[len(line)] = 0
 
     def rand_sample(self):
         rand_samples = []
@@ -31,4 +34,21 @@ class K_means:
             euclidistances.append([line[0]], self.euclidian_distance(point[1:], line[1:]))
 
         return min(euclidistances, key=lambda x: x[1])
+
+    def get_clusters(self):
+        clustered_data = []
+        for _ in range(self.k):
+            clustered_data.append([])
+
+        for line in self.data:
+            clustered_data[line[-1]].append(line)
+
+        return numpy.ndarray(clustered_data)
+    
+    def mean_clusters(self, clusters):
+        means = []
+        for cluster in clusters:
+            means.append(numpy.mean(cluster, axis=0))
+
+        return means
     
