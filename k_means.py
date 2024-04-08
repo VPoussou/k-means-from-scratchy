@@ -6,9 +6,10 @@ import math
 # Home of the main algorithm
 
 class K_means:
-    def __init__(self, k:int, data: numpy.ndarray):
+    def __init__(self, k:int, data: numpy.ndarray, elbow_coeff):
         self.k = k
         self.data = data
+        self.elbow_coeff = elbow_coeff
         self.baricentres = []
         self.data[0][len(self.data[0])] = 'clusters'
         for index, line in enumerate(range(1, len(self.data))):          
@@ -29,13 +30,12 @@ class K_means:
     def euclidian_distance(a_point_coords, b_point_coords) -> int:
         return math.sqrt(sum((a_coord - b_coord)**2 for (a_coord, b_coord) in (a_point_coords, b_point_coords)))
 
-    def closest_point_to(self, point):
-        euclidistances = [] 
-        for line in self.data:
-            euclidistances.append([line[0]], self.euclidian_distance(point[1:], line[1:]))
-
-        return min(euclidistances, key=lambda x: x[1])
-
+    def closest_cluster(self, point):
+        cluster_distances = []
+        for bari_bari in self.baricentres[-1]:
+            cluster_distances.append(self.euclidian_distance(bari_bari, point))
+        return cluster_distances.index(min(cluster_distances))
+    
     def get_clusters(self):
         clustered_data = []
         for _ in range(self.k):
@@ -52,8 +52,23 @@ class K_means:
             means.append(numpy.mean(cluster, axis=0))
         self.baricentres.append(means)
 
-    def get_cluster_variance(self)
-        pass
+    def get_elbow(self):
+        if len(self.baricentres) < 3:
+            return False
+        diff1 = self.baricentres[-3] - self.baricentres[-2]
+        diff2 = self.baricentres[-2] - self.baricentres[-1]
+        elbow = diff1 / diff2
+        if elbow > self.elbow_coeff:
+            return True
+        else:
+            return False
 
     def fit(self):
-        pass
+        elbow = False
+
+        while elbow == False:
+            for line in self.data:
+                line[-1] = self.closest_cluster(line[1:-1])
+            
+            self.baricentres.append(self.mean_clusters(self.get_clusters))
+            elbow = self.get_elbow
