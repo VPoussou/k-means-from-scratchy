@@ -9,6 +9,7 @@ class K_means:
     def __init__(self, k:int, data: numpy.ndarray):
         self.k = k
         self.data = data
+        self.baricentres = []
         self.data[0][len(self.data[0])] = 'clusters'
         for index, line in enumerate(range(1, len(self.data))):          
             line[len(line)] = 0
@@ -49,6 +50,10 @@ class K_means:
         means = []
         for cluster in clusters:
             means.append(numpy.mean(cluster, axis=0))
+        self.baricentres.append(means)
 
-        return means
-    
+    def get_cluster_variance(self)
+        pass
+
+    def fit(self):
+        pass
