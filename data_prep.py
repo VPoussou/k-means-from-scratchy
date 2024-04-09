@@ -9,14 +9,15 @@ class DataPrep:
         self.csv_path = csv_path
         self.pingu = kwargs.get('pingu', False)
         self.read_data()
+        print(self.data.shape)
         self.clean_data()
 
     def read_data(self):
-        self.data = numpy.genfromtxt(self.csv_path, delimiter=',', names=True)
+        self.data = numpy.genfromtxt(self.csv_path, delimiter=',', skip_header=1)
 
     def clean_data(self):
         if self.pingu == True:
-            for line in self.data:
+            for index, line in enumerate(self.data):
                 for el in line:
                     if el == 'NA':
-                        el = 0.5
+                        self.data[index] = 0.5
